@@ -1,0 +1,111 @@
+# Peticiones para probar la API con REST Client
+#
+# Instala la extensión "REST Client" (Huachao Mao) en VS Code.
+# Abre este archivo y pulsa "Send Request" sobre cada línea que empieza por ###
+# Con la variable @host al principio, cambiar de puerto es editar una sola línea.
+
+@host = http://localhost:3000
+
+### 1. Ver que el servidor está vivo
+GET {{host}}/
+
+### 2. Listar todas las películas
+GET {{host}}/api/peliculas
+
+### 3. Obtener los géneros distintos
+GET {{host}}/api/peliculas/generos
+
+### 4. Obtener una película por id (existente)
+GET {{host}}/api/peliculas/1
+
+### 5. Obtener una película por id (inexistente) -> 404
+GET {{host}}/api/peliculas/999
+
+### 6. Obtener una película por id (no numérico) -> 404
+GET {{host}}/api/peliculas/abc
+
+### 7. Crear una película válida -> 201
+POST {{host}}/api/peliculas
+Content-Type: application/json
+
+{
+  "titulo": "Roma",
+  "director": "Alfonso Cuarón",
+  "anio": 2018,
+  "genero": "Drama"
+}
+
+### 8. Crear SIN título (obligatorio) -> 400
+POST {{host}}/api/peliculas
+Content-Type: application/json
+
+{
+  "director": "X"
+}
+
+### 9. Crear con título como número -> 400
+POST {{host}}/api/peliculas
+Content-Type: application/json
+
+{
+  "titulo": 123
+}
+
+### 10. Crear con año fuera de rango -> 400
+POST {{host}}/api/peliculas
+Content-Type: application/json
+
+{
+  "titulo": "Futura",
+  "anio": 3000
+}
+
+### 11. Crear con JSON mal formado -> 400
+POST {{host}}/api/peliculas
+Content-Type: application/json
+
+{titulo: roto, "director": "X"}
+
+### 12. Crear con Content-Type equivocado -> 400
+POST {{host}}/api/peliculas
+Content-Type: text/plain
+
+{
+  "titulo": "Roma"
+}
+
+### 13. Actualizar una película existente -> 200
+PUT {{host}}/api/peliculas/1
+Content-Type: application/json
+
+{
+  "titulo": "El viaje de Chihiro (editada)",
+  "director": "Hayao Miyazaki",
+  "anio": 2001,
+  "genero": "Animación"
+}
+
+### 14. Actualizar película inexistente -> 404
+PUT {{host}}/api/peliculas/999
+Content-Type: application/json
+
+{
+  "titulo": "No existe"
+}
+
+### 15. Actualizar con validación fallida -> 400
+PUT {{host}}/api/peliculas/1
+Content-Type: application/json
+
+{
+  "titulo": 123
+}
+
+### 16. Eliminar una película -> 200 (devuelve la borrada)
+DELETE {{host}}/api/peliculas/1
+
+### 17. Eliminar película inexistente -> 404
+DELETE {{host}}/api/peliculas/999
+
+### 18. Ruta que no existe -> 404
+GET {{host}}/api/peliculas/ruta-que-no-existe
